@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>Java1</module>
+        <module>Java2</module>
     </modules>
 
     <properties>
