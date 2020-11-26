@@ -13,8 +13,4 @@
         <module>Java2</module>
     </modules>
 
-    <properties>
-        <maven.compiler.source>1.11</maven.compiler.source>
-        <maven.compiler.target>1.11</maven.compiler.target>
-    </properties>
 </project>
