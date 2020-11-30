@@ -1,0 +1,176 @@
+.auth {
+    -fx-border-color: #3178BA;
+    -fx-border-width: 1px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 20px;
+}
+
+.authTitleLabel{
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: 900;
+    -fx-font-size: 50px;
+    -fx-text-fill: #3178BA;
+
+}
+
+.authTextFields {
+    -fx-pref-height: 80px;
+    -fx-pref-width: 400px;
+    -fx-border-color: #3178BA;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-color: #FFFFFF;
+
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 18px;
+}
+
+.authLabel {
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 14px;
+    -fx-text-fill: #3178BA;
+}
+
+.signUpLabel {
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 18px;
+    -fx-text-fill: #3178BA;
+}
+
+.logInButton {
+    -fx-pref-width: 186px;
+    -fx-pref-height: 80px;
+    -fx-background-color: #3178BA;
+    -fx-border-radius: 20px;
+
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: 900;
+    -fx-font-size: 30px;
+    -fx-text-fill: #FFFFFF;
+
+    -fx-cursor: hand;
+}
+
+.signUpButton {
+    -fx-pref-width: 100px;
+    -fx-max-width: 100px;
+    -fx-pref-height: 80px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-width: 0px;
+
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #3178BA;
+
+    -fx-cursor: hand;
+}
+
+//стили для окна чата
+.memberTitleInChat {
+    -fx-pref-width: 800px;
+    -fx-max-width: 800px;
+    -fx-pref-height: 130px;
+    -fx-background-color: #3178BA;
+    -fx-border-width: 0px;
+}
+
+.chatBottomElements {
+    -fx-pref-width: 800px;
+    -fx-max-width: 800px;
+    -fx-pref-height: 130px;
+    -fx-border-width: 0px;
+
+}
+
+.messageTextField {
+    -fx-pref-height: 64px;
+    -fx-pref-width: 600px;
+    -fx-border-color: #3178BA;
+    -fx-border-width: 1px;
+    -fx-border-radius: 20px;
+    -fx-border-color: #3178BA;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 20px;
+
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 20px;
+
+    -fx-padding: 0 0 0 56;
+}
+
+.sendMessageButton {
+
+    -fx-background-image: url("images/send-btn.png");
+    -fx-background-size: 110 110;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position:left;
+
+    -fx-pref-height: 110px;
+    -fx-pref-width: 110px;
+
+    -fx-border-width: 0px;
+    -fx-background-radius: 55px;
+}
+
+.addAttachButton {
+
+    -fx-background-image: url("images/clip.png");
+    -fx-background-size: 42 42;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: left;
+    -fx-background-color: #FFFFFF;
+
+    -fx-pref-height: 42px;
+    -fx-pref-width: 42px;
+
+    -fx-border-width: 0px;
+
+}
+
+.chatArea {
+    -fx-background-image: url("images/chat-area-bg.png");
+    -fx-background-repeat: repeat;
+    -fx-background-color: #FFFFFF;
+}
+
+.ownMessageInChat {
+    -fx-background-color: linear-gradient(to bottom, #86C5FF, #3178BA);
+
+    -fx-border-width: 0px;
+    -fx-background-radius:30px;
+
+    -fx-padding: 20 20 20 20;
+
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+    -fx-text-fill: #000000;
+}
+
+.foreignMessageInChat {
+    -fx-background-color: linear-gradient(to bottom, #F4F4F4, #DBDBDB);
+
+    -fx-border-width: 0px;
+    -fx-background-radius:30px;
+
+    -fx-padding: 20 20 20 20;
+
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+    -fx-text-fill: #000000;
+}
