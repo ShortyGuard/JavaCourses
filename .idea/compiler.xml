@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Java2" />
+        <module name="Chat" />
         <module name="Java1" />
       </profile>
     </annotationProcessing>
