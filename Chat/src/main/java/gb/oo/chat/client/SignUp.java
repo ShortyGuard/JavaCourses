@@ -1,18 +1,17 @@
-package lesson4;
+package gb.oo.chat.client;
 
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 
-public class SignIn {
-
-    public void logIn(ActionEvent actionEvent) {
+public class SignUp {
+    public void register(ActionEvent actionEvent) {
         Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         SceneController.getInstance().changeScene(stageTheEventSourceNodeBelongs, SceneEnum.CHAT_WINDOW);
     }
 
-    public void signUp(ActionEvent actionEvent) {
+    public void signIn(ActionEvent actionEvent) {
         Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        SceneController.getInstance().changeScene(stageTheEventSourceNodeBelongs, SceneEnum.SIGN_UP);
+        SceneController.getInstance().changeScene(stageTheEventSourceNodeBelongs, SceneEnum.SIGN_IN);
     }
 }

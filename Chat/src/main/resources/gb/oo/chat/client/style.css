@@ -36,6 +36,15 @@
     -fx-text-fill: #3178BA;
 }
 
+.errorLabel {
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 14px;
+    -fx-text-fill: red;
+    -fx-text-alignment: center;
+}
+
 .signUpLabel {
     -fx-font-family: Roboto;
     -fx-font-style: normal;
@@ -145,11 +154,21 @@
     -fx-background-color: #FFFFFF;
 }
 
+.chatMessage{
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+    -fx-text-fill: #000000;
+}
+
 .ownMessageInChat {
     -fx-background-color: linear-gradient(to bottom, #86C5FF, #3178BA);
 
     -fx-border-width: 0px;
-    -fx-background-radius:30px;
+    -fx-background-radius: 0 20 20 20;
+
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.28), 2, 0, 0, 4);
 
     -fx-padding: 20 20 20 20;
 
@@ -164,7 +183,9 @@
     -fx-background-color: linear-gradient(to bottom, #F4F4F4, #DBDBDB);
 
     -fx-border-width: 0px;
-    -fx-background-radius:30px;
+    -fx-background-radius: 0 20 20 20;
+
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.28), 2, 0, 0, 4);
 
     -fx-padding: 20 20 20 20;
 
@@ -173,4 +194,35 @@
     -fx-font-weight: normal;
     -fx-font-size: 12px;
     -fx-text-fill: #000000;
+}
+
+.dateMessageInChat {
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 10px;
+    -fx-text-fill: #414141;
+}
+
+.nickNameMessageInChat {
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+    -fx-text-fill: #000000;
+}
+
+.titleNickName{
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #FFFFFF;
+}
+.titlePhone{
+    -fx-font-family: Roboto;
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+    -fx-text-fill: #C0C0C0;
 }

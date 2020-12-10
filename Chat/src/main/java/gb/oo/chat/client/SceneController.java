@@ -1,4 +1,4 @@
-package lesson4;
+package gb.oo.chat.client;
 
 import java.util.HashMap;
 import javafx.scene.Scene;

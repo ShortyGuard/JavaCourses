@@ -1,4 +1,4 @@
-package lesson4;
+package gb.oo.chat.client;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -23,4 +23,16 @@ public class ChatApplication extends Application {
         primaryStage.show();
     }
 
+    @Override
+    public void init() throws Exception {
+        super.init();
+        //поднимем ChatClient
+        ChatClient.getInstance();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        ChatClient.getInstance().setRunning(false);
+    }
 }
