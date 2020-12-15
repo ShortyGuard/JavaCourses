@@ -8,7 +8,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="880.0"
             prefWidth="678.0" styleClass="auth" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="lesson4.SignUp">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="gb.oo.chat.client.SignUp">
     <children>
         <Label layoutX="243.0" layoutY="63.0" styleClass="authTitleLabel" stylesheets="@style.css" text="Sign Up"/>
         <Label layoutX="134.0" layoutY="180.0" styleClass="authLabel" stylesheets="@style.css" text="Login/email"/>
