@@ -1,4 +1,4 @@
-package lesson4;
+package gb.oo.chat.client;
 
 public enum SceneEnum {
     SIGN_IN("Sign In", "SignIn"),
