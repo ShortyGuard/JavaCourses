@@ -2,14 +2,18 @@ package gb.oo.chat.server;
 
 import gb.oo.chat.core.AuthRequest;
 import gb.oo.chat.core.AuthResponse;
-import gb.oo.chat.core.AuthServer;
+import gb.oo.chat.core.ChangeNickNameEvent;
 import gb.oo.chat.core.ChatMessage;
-import gb.oo.chat.core.ChatUserProfile;
 import gb.oo.chat.core.ChatUserNotFoundException;
+import gb.oo.chat.core.ChatUserProfile;
+import gb.oo.chat.core.RegisterRequest;
+import gb.oo.chat.core.RegisterResponse;
 import gb.oo.chat.core.TextMessage;
+import gb.oo.chat.core.WrongCredentialsException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +32,7 @@ public class ChatServer {
     @Getter
     private AuthServer authServer;
 
-    public ChatServer(int port) {
+    public ChatServer(int port) throws SQLException, ClassNotFoundException {
         this.port = port;
         this.authServer = AuthServerImpl.getInstance();
     }
@@ -70,10 +74,10 @@ public class ChatServer {
         ChatUserProfile chatUserProfile;
         try {
             chatUserProfile = this.authServer.passAuthentication(authRequest.getAuthor(), authRequest.getPassword());
-        } catch (ChatUserNotFoundException e) {
+        } catch (ChatUserNotFoundException | SQLException e) {
             clientHandler.sendMessage(AuthResponse.builder()
                 .isAccepted(false)
-                .message(e.getUserMessage())
+                .message(e.getMessage())
                 .build());
             return null;
         }
@@ -91,6 +95,27 @@ public class ChatServer {
         return chatUserProfile;
     }
 
+    public void registerNewUser(RegisterRequest registerRequest, ClientHandler clientHandler)
+        throws IOException {
+
+        try {
+            authServer.registerUser(registerRequest.getAuthor(), registerRequest.getPassword(),
+                registerRequest.getAuthor());
+
+            clientHandler.sendMessage(RegisterResponse.builder()
+                .isAccepted(true)
+                .message("User registered. Please, Sign In!")
+                .build());
+
+        } catch (WrongCredentialsException | SQLException e) {
+            e.printStackTrace();
+            clientHandler.sendMessage(RegisterResponse.builder()
+                .isAccepted(false)
+                .message("User with such login is already Registered. Try another login")
+                .build());
+        }
+    }
+
     public void unregisterClient(ClientHandler clientHandler) throws IOException {
         this.clientHandlers.remove(clientHandler);
         this.sendBroadcast(TextMessage.builder()
@@ -99,8 +124,17 @@ public class ChatServer {
             .build());
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
         ChatServer chatServer = new ChatServer(8088);
         chatServer.startServer();
+    }
+
+    public void changeNickName(ChatUserProfile user, String newNickName) throws ChatUserNotFoundException,
+        WrongCredentialsException, SQLException, IOException {
+        authServer.changeChatUserNickName(newNickName, user.getId());
+        user.setNickName(newNickName);
+        sendBroadcast(ChangeNickNameEvent.builder()
+            .userProfile(user)
+            .build());
     }
 }
