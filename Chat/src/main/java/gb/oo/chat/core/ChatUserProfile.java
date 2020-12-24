@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChatUserProfile {
+    private Long id;
     private String login;
-    private String password;
     private String nickName;
 }

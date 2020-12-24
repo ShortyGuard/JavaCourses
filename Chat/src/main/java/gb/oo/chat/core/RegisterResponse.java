@@ -7,7 +7,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class AuthResponse implements ChatMessage {
+public class RegisterResponse implements ChatMessage {
 
     private String author;
     private String nickName;
@@ -20,12 +20,12 @@ public class AuthResponse implements ChatMessage {
 
     @Override
     public ChatMessageType getMessageType() {
-        return ChatMessageType.AUTH_RESPONSE;
+        return ChatMessageType.REGISTER_RESPONSE;
     }
 
     @Override
     public String toString() {
-        return "AuthResponse{" +
+        return "RegisterResponse{" +
             "author='" + author + '\'' +
             ", nickName='" + nickName + '\'' +
             ", isAccepted=" + isAccepted +

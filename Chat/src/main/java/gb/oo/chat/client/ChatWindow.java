@@ -9,8 +9,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.NodeOrientation;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -18,6 +22,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class ChatWindow implements Initializable, MessageListener {
     public TextField messageToSend;
@@ -43,8 +49,8 @@ public class ChatWindow implements Initializable, MessageListener {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("initialize");
-        ChatClient.getInstance().setMessageListener(this);
+        System.out.println("initialize ChatWindow");
+        ChatClient.getInstance().addMessageListener(this);
         this.messagesVBox.heightProperty().addListener(
             (observable, oldValue, newValue) -> {
                 messagesScrollPanel.setVvalue( 1.0d );
@@ -58,6 +64,10 @@ public class ChatWindow implements Initializable, MessageListener {
             case AUTH_REQUEST:
                 break;
             case AUTH_RESPONSE:
+                break;
+            case REGISTER_REQUEST:
+                break;
+            case REGISTER_RESPONSE:
                 break;
             case TEXT_MESSAGE:
                 Platform.runLater(new Runnable() {
@@ -80,5 +90,19 @@ public class ChatWindow implements Initializable, MessageListener {
             default:
                 throw new IllegalStateException("Unexpected value: " + message.getMessageType());
         }
+    }
+
+    public void openChangeNickName(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("change_nick_name.fxml"));
+        Parent parent = fxmlLoader.load();
+        //ChangeNickNameController changeNickNameController = fxmlLoader.getController();
+       // changeNickNameController.setAppMainObservableList(tvObservableList);
+
+        Scene scene = new Scene(parent, 480, 285);
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setResizable(false);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 }

@@ -1,9 +1,11 @@
 package gb.oo.chat.server;
 
 import gb.oo.chat.core.AuthRequest;
+import gb.oo.chat.core.ChangeNickNameRequest;
 import gb.oo.chat.core.ChatMessage;
 import gb.oo.chat.core.ChatMessageType;
 import gb.oo.chat.core.ChatUserProfile;
+import gb.oo.chat.core.RegisterRequest;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -64,10 +66,18 @@ public class ClientHandler implements Runnable {
                             isAuthorized = false;
                             user = this.chatServer.passClientAuthentication((AuthRequest) message, this);
                             if (user != null) {
-                                isAuthorized    = true;
+                                isAuthorized = true;
                             }
                             break;
                         case AUTH_RESPONSE:
+                            break;
+                        case REGISTER_REQUEST:
+                            this.chatServer.registerNewUser((RegisterRequest) message, this);
+                            break;
+                        case REGISTER_RESPONSE:
+                            break;
+                        case CHANGE_NICK_NAME_REQUEST:
+                            this.chatServer.changeNickName(user, ((ChangeNickNameRequest)message).getNewNickName());
                             break;
                         case TEXT_MESSAGE:
                             chatServer.sendBroadcast(message);
@@ -76,6 +86,7 @@ public class ClientHandler implements Runnable {
                             break;
                         case QUIT_MESSAGE:
                             break;
+
                     }
 
                 } catch (ClassNotFoundException e) {
@@ -111,7 +122,9 @@ public class ClientHandler implements Runnable {
     }
 
     public void sendMessage(ChatMessage message) throws IOException {
-        if (message.getMessageType() != ChatMessageType.AUTH_RESPONSE && !isAuthorized) {
+        if (message.getMessageType() != ChatMessageType.AUTH_RESPONSE
+            && message.getMessageType() != ChatMessageType.REGISTER_RESPONSE
+            && !isAuthorized) {
             //надо аутентифицироваться
             return;
         }

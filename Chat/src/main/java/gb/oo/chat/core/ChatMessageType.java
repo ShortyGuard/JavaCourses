@@ -3,7 +3,11 @@ package gb.oo.chat.core;
 public enum ChatMessageType {
     AUTH_REQUEST,
     AUTH_RESPONSE,
+    REGISTER_REQUEST,
+    REGISTER_RESPONSE,
+    CHANGE_NICK_NAME_REQUEST,
+    CHANGE_NICK_NAME_EVENT,
     TEXT_MESSAGE,
     ICON_MESSAGE,
-    QUIT_MESSAGE
+    QUIT_MESSAGE;
 }

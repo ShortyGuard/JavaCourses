@@ -1,27 +1,23 @@
 package gb.oo.chat.server;
 
-import gb.oo.chat.core.AuthServer;
-import gb.oo.chat.core.ChatUserProfile;
 import gb.oo.chat.core.ChatUserNotFoundException;
+import gb.oo.chat.core.ChatUserProfile;
 import gb.oo.chat.core.WrongCredentialsException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import gb.oo.chat.server.data.UserEntity;
+import gb.oo.chat.server.data.UserRepository;
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class AuthServerImpl implements AuthServer {
 
     private static AuthServer instance;
-    private Map<String, ChatUserProfile> users;
+    private UserRepository userRepository;
 
-    private AuthServerImpl() {
-        this.users = new ConcurrentHashMap<>();
-        initialize();
+    private AuthServerImpl() throws ClassNotFoundException, SQLException {
+        userRepository = UserRepositorySgliteImpl.getInstance();
     }
 
-    private void initialize() {
-        // TODO: 11.12.2020 тут можно сделать подгрузку зарегистрированных пользователей
-    }
-
-    public static AuthServer getInstance() {
+    public static AuthServer getInstance() throws ClassNotFoundException, SQLException {
         if (instance == null) {
             instance = new AuthServerImpl();
         }
@@ -29,51 +25,38 @@ public class AuthServerImpl implements AuthServer {
     }
 
     @Override
-    public ChatUserProfile passAuthentication(String login, String password) throws ChatUserNotFoundException {
-        //любого пользователя будем авторизовывать
-        // TODO: 11.12.2020 переделать на настоящую авторизацию
+    public ChatUserProfile passAuthentication(String login, String password) throws ChatUserNotFoundException, SQLException {
+        UserEntity userEntity = userRepository.getUserByLoginAndPassword(login, password);
 
-        ChatUserProfile user = this.users.get(login);
-        if (user == null) {
-            user = ChatUserProfile.builder()
-                .login(login)
-                .nickName(login)
-                .password(password)
-                .build();
-            this.users.put(login, user);
-        } else {
-            if (!user.getLogin().equals(login) || !user.getPassword().equals(password)) {
-                throw new ChatUserNotFoundException("User with such login/password was not found");
-            }
+        if (userEntity == null) {
+            throw new ChatUserNotFoundException("User with such login/password was not found");
         }
-        return user;
+        return UserMapper.mapToChatUserProfile(userEntity);
     }
 
     @Override
-    public void registerUser(String login, String password, String nickName) throws WrongCredentialsException {
-        ChatUserProfile user = this.users.get(login);
-        if (user == null) {
-            user = ChatUserProfile.builder()
-                .login(login)
-                .nickName(nickName)
-                .password(password)
-                .build();
-            this.users.put(login, user);
-        } else {
-            throw new WrongCredentialsException("There is no user with such login");
-        }
+    public void registerUser(String login, String password, String nickName) throws WrongCredentialsException, SQLException {
+        userRepository.saveUser(UserEntity.builder()
+            .login(login)
+            .password(password)
+            .nickName(nickName)
+            .build());
     }
 
     @Override
-    public void changeUserByLogin(String login, ChatUserProfile chatUserProfile)
-        throws WrongCredentialsException, ChatUserNotFoundException {
-        if (login == null || !login.equals(chatUserProfile.getLogin())){
-            throw new WrongCredentialsException("User login is wrong");
+    public void changeChatUserNickName(String newNickName, Long id) throws ChatUserNotFoundException, SQLException {
+        UserEntity userEntity = userRepository.getUserById(id);
+
+        if (userEntity == null) {
+            throw new ChatUserNotFoundException("User with id:" + id + " was not found");
         }
-        if (this.users.get(login) != null) {
-            this.users.put(login, chatUserProfile);
-        } else {
-            throw new WrongCredentialsException("There is no user with such login");
-        }
+
+        userEntity.setNickName(newNickName);
+        userRepository.updateUser(userEntity);
+    }
+
+    @Override
+    public void close() throws IOException {
+        userRepository.close();
     }
 }

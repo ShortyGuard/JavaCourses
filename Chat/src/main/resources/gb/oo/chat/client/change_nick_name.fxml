@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="284.0" prefWidth="481.0" styleClass="auth" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gb.oo.chat.client.ChangeNickNameController">
+    <children>
+        <Label layoutX="43.0" layoutY="48.0" styleClass="authLabel" stylesheets="@style.css" text="New nickname" />
+        <TextField fx:id="nickName" layoutX="41.0" layoutY="77.0" onAction="#changeNickName" prefWidth="216.0" styleClass="authTextFields" stylesheets="@style.css" />
+        <Button layoutX="255.0" layoutY="178.0" mnemonicParsing="false" onAction="#changeNickName" styleClass="logInButton" stylesheets="@style.css" text="Change" />
+    </children>
+</AnchorPane>

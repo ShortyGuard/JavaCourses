@@ -1,21 +1,20 @@
 package gb.oo.chat.client;
 
-import gb.oo.chat.core.AuthRequest;
 import gb.oo.chat.core.AuthResponse;
+import gb.oo.chat.core.ChangeNickNameRequest;
 import gb.oo.chat.core.ChatMessage;
 import gb.oo.chat.core.ChatMessageType;
-import gb.oo.chat.core.TextMessage;
+import gb.oo.chat.core.RegisterResponse;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
-public class ChatClient implements Runnable{
+public class ChatClient implements Runnable {
 
     private static ChatClient chatClient;
 
@@ -36,12 +35,10 @@ public class ChatClient implements Runnable{
     @Getter
     private boolean isConnected;
 
-    @Setter
-    private MessageListener messageListener;
-
+    private Set<MessageListener> messageListeners = new HashSet<>();
 
     private ChatClient(int port) {
-        this.port   = port;
+        this.port = port;
     }
 
     public static ChatClient getInstance() {
@@ -60,8 +57,7 @@ public class ChatClient implements Runnable{
         this.isRunning = true;
         this.isAuthorized = false;
         while (this.isRunning) {
-            if (!isConnected)
-            {
+            if (!isConnected) {
                 this.connect();
             }
             try {
@@ -82,6 +78,12 @@ public class ChatClient implements Runnable{
                             System.out.println("Received AuthResponse with accepted FALSE.");
                             this.isAuthorized = false;
                         }
+                        this.receiveMessage(message);
+                        break;
+                    case REGISTER_REQUEST:
+                        break;
+                    case REGISTER_RESPONSE:
+                          this.receiveMessage(message);
                         break;
                     case TEXT_MESSAGE:
                         this.receiveMessage(message);
@@ -103,10 +105,14 @@ public class ChatClient implements Runnable{
         System.out.println("ChatClient stopped.");
     }
 
+    public void addMessageListener(MessageListener listener){
+        this.messageListeners.add(listener);
+    }
+
     private void receiveMessage(ChatMessage message) {
         System.out.println("Message received: " + message);
-        if (this.messageListener != null) {
-            this.messageListener.receiveMessage(message);
+        for (MessageListener listener : this.messageListeners) {
+            listener.receiveMessage(message);
         }
     }
 
@@ -162,5 +168,11 @@ public class ChatClient implements Runnable{
 
     public boolean isOwnMessage(ChatMessage message) {
         return message.getAuthor().equals(this.nickName);
+    }
+
+    public void changeNickName(String newNickName) throws IOException {
+        sendMessage(ChangeNickNameRequest.builder()
+            .newNickName(newNickName)
+            .build());
     }
 }
