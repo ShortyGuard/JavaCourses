@@ -15,6 +15,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,14 +42,17 @@ public class ChatServer {
     private void startServer() {
         System.out.println("EchoServer started!!!");
         this.isRunning = true;
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         try (ServerSocket serverSocket = new ServerSocket(this.port)) {
             while (this.isRunning) {
                 System.out.println("EchoServer is waiting for new ChatClient...");
                 Socket acceptSocket = serverSocket.accept();
                 System.out.println("EchoServer accepted new ChatClient...");
                 ClientHandler clientHandler = new ClientHandler(acceptSocket, this);
+                executorService.execute(clientHandler);
+                /*
                 Thread clientThread = new Thread(clientHandler);
-                clientThread.start();
+                clientThread.start();*/
 
                 System.out.printf("ClientHandler #%d accepted!", clientHandler.getClientId());
             }

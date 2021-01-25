@@ -4,12 +4,15 @@ import gb.oo.chat.core.AuthRequest;
 import gb.oo.chat.core.ChangeNickNameRequest;
 import gb.oo.chat.core.ChatMessage;
 import gb.oo.chat.core.ChatMessageType;
+import gb.oo.chat.core.ChatUserNotFoundException;
 import gb.oo.chat.core.ChatUserProfile;
 import gb.oo.chat.core.RegisterRequest;
+import gb.oo.chat.core.WrongCredentialsException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.SQLException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -77,7 +80,7 @@ public class ClientHandler implements Runnable {
                         case REGISTER_RESPONSE:
                             break;
                         case CHANGE_NICK_NAME_REQUEST:
-                            this.chatServer.changeNickName(user, ((ChangeNickNameRequest)message).getNewNickName());
+                            this.chatServer.changeNickName(user, ((ChangeNickNameRequest) message).getNewNickName());
                             break;
                         case TEXT_MESSAGE:
                             chatServer.sendBroadcast(message);
@@ -89,7 +92,8 @@ public class ClientHandler implements Runnable {
 
                     }
 
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException | ChatUserNotFoundException | WrongCredentialsException
+                    | SQLException e) {
                     System.out.println("Couldn't get object class. Message skiped.");
                     e.printStackTrace();
                 } catch (IOException e) {
