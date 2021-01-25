@@ -1,15 +1,17 @@
 package gb.oo.chat.client;
 
+import gb.oo.chat.client.service.UserHistoryService;
+import gb.oo.chat.client.service.UserHistoryServiceImpl;
 import gb.oo.chat.core.AuthResponse;
 import gb.oo.chat.core.ChangeNickNameRequest;
 import gb.oo.chat.core.ChatMessage;
 import gb.oo.chat.core.ChatMessageType;
-import gb.oo.chat.core.RegisterResponse;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +23,8 @@ public class ChatClient implements Runnable {
     private int port;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
+
+    private UserHistoryService userHistoryService;
 
     @Getter
     @Setter
@@ -73,6 +77,7 @@ public class ChatClient implements Runnable {
                         if (authResponse.isAccepted()) {
                             System.out.println("Received AuthResponse with accepted TRUE.");
                             this.nickName = authResponse.getNickName();
+                            this.userHistoryService = new UserHistoryServiceImpl();
                             this.isAuthorized = true;
                         } else {
                             System.out.println("Received AuthResponse with accepted FALSE.");
@@ -83,7 +88,7 @@ public class ChatClient implements Runnable {
                     case REGISTER_REQUEST:
                         break;
                     case REGISTER_RESPONSE:
-                          this.receiveMessage(message);
+                        this.receiveMessage(message);
                         break;
                     case TEXT_MESSAGE:
                         this.receiveMessage(message);
@@ -105,7 +110,7 @@ public class ChatClient implements Runnable {
         System.out.println("ChatClient stopped.");
     }
 
-    public void addMessageListener(MessageListener listener){
+    public void addMessageListener(MessageListener listener) {
         this.messageListeners.add(listener);
     }
 
@@ -174,5 +179,13 @@ public class ChatClient implements Runnable {
         sendMessage(ChangeNickNameRequest.builder()
             .newNickName(newNickName)
             .build());
+    }
+
+    public List<ChatMessage> loadHistory() throws IOException, ClassNotFoundException {
+        return userHistoryService.loadHistory(100);
+    }
+
+    public void storeMessage(ChatMessage message) throws IOException {
+        userHistoryService.storeMessage(message);
     }
 }

@@ -1,26 +1,22 @@
 package gb.oo.chat.client;
 
 import gb.oo.chat.client.elements.TextMessagePanel;
+import gb.oo.chat.core.AuthResponse;
 import gb.oo.chat.core.ChatMessage;
 import gb.oo.chat.core.TextMessage;
-import gb.oo.chat.server.ClientHandler;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.NodeOrientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -53,7 +49,7 @@ public class ChatWindow implements Initializable, MessageListener {
         ChatClient.getInstance().addMessageListener(this);
         this.messagesVBox.heightProperty().addListener(
             (observable, oldValue, newValue) -> {
-                messagesScrollPanel.setVvalue( 1.0d );
+                messagesScrollPanel.setVvalue(1.0d);
             }
         );
     }
@@ -64,6 +60,14 @@ public class ChatWindow implements Initializable, MessageListener {
             case AUTH_REQUEST:
                 break;
             case AUTH_RESPONSE:
+                if (((AuthResponse) message).isAccepted()) {
+                    try {
+                        loadHistory();
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.out.println("History load failed");
+                        e.printStackTrace();
+                    }
+                }
                 break;
             case REGISTER_REQUEST:
                 break;
@@ -73,15 +77,18 @@ public class ChatWindow implements Initializable, MessageListener {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        HBox box = new HBox();
-
                         TextMessagePanel textMessagePanel = new TextMessagePanel((TextMessage) message,
                             ChatClient.getInstance().isOwnMessage(message));
 
                         messagesVBox.getChildren().add(textMessagePanel);
                     }
                 });
-
+                try {
+                    ChatClient.getInstance().storeMessage(message);
+                } catch (IOException e) {
+                    System.out.println("Ошибка при сохранении сообщения");
+                    e.printStackTrace();
+                }
                 break;
             case ICON_MESSAGE:
                 break;
@@ -96,7 +103,7 @@ public class ChatWindow implements Initializable, MessageListener {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("change_nick_name.fxml"));
         Parent parent = fxmlLoader.load();
         //ChangeNickNameController changeNickNameController = fxmlLoader.getController();
-       // changeNickNameController.setAppMainObservableList(tvObservableList);
+        // changeNickNameController.setAppMainObservableList(tvObservableList);
 
         Scene scene = new Scene(parent, 480, 285);
         Stage stage = new Stage();
@@ -104,5 +111,21 @@ public class ChatWindow implements Initializable, MessageListener {
         stage.setResizable(false);
         stage.setScene(scene);
         stage.showAndWait();
+    }
+
+    private void loadHistory() throws IOException, ClassNotFoundException {
+        List<ChatMessage> chatMessages = ChatClient.getInstance().loadHistory();
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                for (ChatMessage chatMessage : chatMessages) {
+                    TextMessagePanel textMessagePanel = new TextMessagePanel((TextMessage) chatMessage,
+                        ChatClient.getInstance().isOwnMessage(chatMessage));
+
+                    messagesVBox.getChildren().add(textMessagePanel);
+                }
+            }
+        });
     }
 }
