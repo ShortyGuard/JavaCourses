@@ -1,5 +1,6 @@
 package gb.oo.chat.server;
 
+import com.sun.javafx.binding.StringFormatter;
 import gb.oo.chat.core.AuthRequest;
 import gb.oo.chat.core.AuthResponse;
 import gb.oo.chat.core.ChangeNickNameEvent;
@@ -17,8 +18,12 @@ import java.sql.SQLException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class ChatServer {
+
+    private static final Logger logger = LogManager.getLogger(ChatServer.class);
 
     public static final String SERVER_NAME = "ChatServer";
     private final int port;
@@ -38,21 +43,22 @@ public class ChatServer {
     }
 
     private void startServer() {
-        System.out.println("EchoServer started!!!");
+        logger.info("EchoServer started!!!");
         this.isRunning = true;
         try (ServerSocket serverSocket = new ServerSocket(this.port)) {
             while (this.isRunning) {
-                System.out.println("EchoServer is waiting for new ChatClient...");
+                logger.info("EchoServer is waiting for new ChatClient...");
                 Socket acceptSocket = serverSocket.accept();
-                System.out.println("EchoServer accepted new ChatClient...");
+                logger.info("EchoServer accepted new ChatClient...");
                 ClientHandler clientHandler = new ClientHandler(acceptSocket, this);
                 Thread clientThread = new Thread(clientHandler);
                 clientThread.start();
 
-                System.out.printf("ClientHandler #%d accepted!", clientHandler.getClientId());
+                logger.info(StringFormatter.format("ClientHandler #%d accepted!",
+                    clientHandler.getClientId()).getValue());
             }
         } catch (Exception e) {
-            System.out.println("Server crashed");
+            logger.error("Server crashed");
         }
 
     }
