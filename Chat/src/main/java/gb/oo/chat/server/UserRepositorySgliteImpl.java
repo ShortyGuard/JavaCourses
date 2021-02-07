@@ -10,8 +10,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class UserRepositorySgliteImpl implements UserRepository {
+
+    private static final Logger logger = LogManager.getLogger(UserRepositorySgliteImpl.class);
 
     private final String CREATE_USERS_TABLE  = "CREATE TABLE IF NOT EXISTS Users\n" +
         "(\n" +
@@ -33,7 +37,9 @@ public class UserRepositorySgliteImpl implements UserRepository {
 
     private UserRepositorySgliteImpl() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
+        logger.info("Open connection jdbc:sqlite:chat.db");
         connection  = DriverManager.getConnection("jdbc:sqlite:chat.db");
+        logger.info("Connection opened");
         statement   = connection.createStatement();
 
         init();
@@ -94,13 +100,14 @@ public class UserRepositorySgliteImpl implements UserRepository {
     public void close() throws IOException {
         try {
             statement.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            logger.debug("Error while closing statement", e);
         }
         try {
             connection.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            logger.debug("Error while closing connection", e);
+
         }
     }
 }

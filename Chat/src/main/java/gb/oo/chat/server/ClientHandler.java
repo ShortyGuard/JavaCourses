@@ -4,16 +4,23 @@ import gb.oo.chat.core.AuthRequest;
 import gb.oo.chat.core.ChangeNickNameRequest;
 import gb.oo.chat.core.ChatMessage;
 import gb.oo.chat.core.ChatMessageType;
+import gb.oo.chat.core.ChatUserNotFoundException;
 import gb.oo.chat.core.ChatUserProfile;
 import gb.oo.chat.core.RegisterRequest;
+import gb.oo.chat.core.WrongCredentialsException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.SQLException;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class ClientHandler implements Runnable {
+    private static final Logger logger = LogManager.getLogger(ClientHandler.class);
+
     private static int idSequence = 0;
 
     private ObjectInputStream inputStream;
@@ -41,18 +48,18 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("ClientHandler starting...");
+        logger.info("ClientHandler starting...");
         this.isRunning = true;
         this.isAuthorized = false;
         try {
-            System.out.print("  Getting outputStream... ");
+            logger.debug("  Getting outputStream... ");
             outputStream = new ObjectOutputStream(acceptSocket.getOutputStream());
-            System.out.print("Done\n  Getting inputStream... ");
+            logger.debug("Done\n  Getting inputStream... ");
             inputStream = new ObjectInputStream(acceptSocket.getInputStream());
-            System.out.println("Done\n  ClientHandler connected and ready to chat!!");
+            logger.debug("Done\n  ClientHandler connected and ready to chat!!");
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("ClientHandler couldn't get socket. Abort!");
+            logger.error("ClientHandler couldn't get socket. Abort!");
             return;
         }
         try {
@@ -60,7 +67,7 @@ public class ClientHandler implements Runnable {
             while (this.isRunning) {
                 try {
                     ChatMessage message = (ChatMessage) this.inputStream.readObject();
-                    System.out.println("Read message: " + message);
+                    logger.debug("Read message: " + message);
                     switch (message.getMessageType()) {
                         case AUTH_REQUEST:
                             isAuthorized = false;
@@ -89,12 +96,10 @@ public class ClientHandler implements Runnable {
 
                     }
 
-                } catch (ClassNotFoundException e) {
-                    System.out.println("Couldn't get object class. Message skiped.");
-                    e.printStackTrace();
+                } catch (ClassNotFoundException | WrongCredentialsException | SQLException | ChatUserNotFoundException e) {
+                    logger.error("Couldn't get object class. Message skiped.", e);
                 } catch (IOException e) {
-                    System.out.println("Couldn't get object class. Message skiped.");
-                    e.printStackTrace();
+                    logger.error("Couldn't get object class. Message skiped.", e);
                     this.isRunning = false;
                     break;
                 }
@@ -103,22 +108,22 @@ public class ClientHandler implements Runnable {
         } finally {
             this.isAuthorized = false;
             try {
-                System.out.print("Closing inputStream...");
+                logger.debug("Closing inputStream...");
                 this.inputStream.close();
-                System.out.println("Done\n");
+                logger.debug("Done\n");
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.debug("Error while closing inputStream", e);
             }
             try {
-                System.out.print("Closing outputStream...");
+                logger.debug("Closing outputStream...");
                 this.chatServer.unregisterClient(this);
                 this.outputStream.close();
-                System.out.println("Done\n");
+                logger.debug("Done\n");
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.debug("Error while closing outputStream", e);
             }
         }
-        System.out.println("ClientHandler stopped.");
+        logger.info("ClientHandler stopped.");
     }
 
     public void sendMessage(ChatMessage message) throws IOException {
